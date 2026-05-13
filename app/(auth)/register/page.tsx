@@ -28,7 +28,7 @@ const ModernInput = ({
         <input
           id={id}
           type={type}
-          placeholder={focused ? placeholder : ""}
+          placeholder={placeholder}
           onFocus={() => setFocused(true)}
           onBlur={(e) => setFocused(e.target.value !== "")}
           className="w-full h-12 px-4 py-3 font-mono text-sm tracking-wide transition-all duration-200 rounded-lg 
@@ -107,7 +107,7 @@ export default function Register() {
               value={name}
               placeholder="Nome completo"
               onChange={(e: any) => setName(e.target.value)}
-              className="w-full px-4 py-3 bg-[#18181b] border border-white/5 rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
+              className="w-full px-4 py-3 bg-[#18181b] border border-white/5 rounded-lg text-sm text-white placeholder:text-zinc-700 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
             />
           </div>
           <div>
