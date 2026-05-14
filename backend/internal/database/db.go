@@ -25,9 +25,9 @@ func ConectarBanco() (*sql.DB, error) {
         return nil, err
     }
 
-    err := db.Ping()
+    err = db.Ping()
     if err != nil {
-        log.Fatat("Erro ao conectar no banco de dados (Ping falhou):", err)
+        log.Fatal("Erro ao conectar no banco de dados (Ping falhou):", err)
     }
     fmt.Println("✅ Banco de dados conectado com sucesso!")
 
