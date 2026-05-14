@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// 1. Inicia o Banco de Dados
-	db, err := database.Conectar()
+	db, err := database.ConectarBanco()
 	if err != nil {
 		log.Fatalf("Erro ao conectar no banco: %v", err)
 	}
