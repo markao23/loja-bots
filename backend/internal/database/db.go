@@ -4,6 +4,7 @@ import (
     "database/sql"
     "fmt"
     "os"
+    _ "github.com/lib/pq"
 )
 
 func ConectarBanco() (*sql.DB, error) {
@@ -22,6 +23,12 @@ func ConectarBanco() (*sql.DB, error) {
     if err != nil {
         return nil, err
     }
+
+    err := db.Ping()
+    if err != nil {
+        log.Fatat("Erro ao conectar no banco de dados (Ping falhou):", err)
+    }
+    fmt.Println("✅ Banco de dados conectado com sucesso!")
 
     return db, nil
 }
