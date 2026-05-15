@@ -19,13 +19,15 @@ type Usuario struct {
 func BuscarUsuarioPorEmail(db *sql.DB, email string) (*Usuario, error) {
     var u Usuario
     // ATENÇÃO: A tabela precisa ser users_cadastrados
-    query := `SELECT id, name, email, senha_hash FROM users_cadastrados WHERE email = $1`
+    query := `SELECT id, senha_hash FROM users_cadastrados WHERE email = $1`
     
-    err := db.QueryRow(query, email).Scan(&u.ID, &u.Name, &u.Email, &u.SenhaHash)
+    err := db.QueryRow(query, email).Scan(&u.ID, &u.SenhaHash)
     if err != nil {
         return nil, err
     }
     
+	u.Email = email
+
     return &u, nil
 }
 
