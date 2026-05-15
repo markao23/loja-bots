@@ -2,24 +2,25 @@ name: "Housekeeping: Limpeza de Branches"
 
 on:
   schedule:
-    - cron: '0 3 * * 1' # Toda segunda às 03:00
-  workflow_dispatch: # Permite rodar manualmente
+    # Roda toda segunda-feira às 03:00
+    - cron: '0 3 * * 1'
+  workflow_dispatch: # Permite que você clique no botão "Run" para testar
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v9
+      # USANDO A ACTION OFICIAL DO GITHUB (actions/stale)
+      - name: Limpeza de branches inativas
+        uses: actions/stale@v9
         with:
-          # Configurações para Branches
-          stale-branch-message: 'Esta branch está sem atividade e será removida.'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          # Configurações para deletar branches sem mexer em Issues/PRs
           days-before-stale: 30
           days-before-branch-delete: 0
           exempt-branch-mats: "main,master,develop"
-          # Isso garante que ele foque em branches e não em issues agora
-          stale-issue-message: 'none' 
-          stale-pr-message: 'none'
+          stale-issue-message: "none"
+          stale-pr-message: "none"
