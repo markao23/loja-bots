@@ -18,7 +18,7 @@ type LoginRequest struct {
 }
 
 type RegistroRequest struct {
-	Nome  string `json:"nome"`
+	Name  string `json:"name"`
     Email string `json:"email"`
     Senha string `json:"senha"`
 }
@@ -72,7 +72,7 @@ func Registro(db *sql.DB) http.HandlerFunc {
         }
 
         // 2. Validação de Negócio (Sanitização básica)
-        if strings.TrimSpace(req.Nome) == "" || strings.TrimSpace(req.Email) == "" {
+        if strings.TrimSpace(req.Name) == "" || strings.TrimSpace(req.Email) == "" {
             http.Error(w, `{"erro": "Nome e e-mail são obrigatórios"}`, http.StatusBadRequest)
             return
         }
@@ -101,7 +101,7 @@ func Registro(db *sql.DB) http.HandlerFunc {
 
         // 5. Chama o Model para inserir no banco de dados
         // Passamos o hash gerado, e NUNCA a req.Senha em texto plano
-        err = models.CriarUsuario(db, req.Nome, req.Email, string(senhaHash))
+        err = models.CriarUsuario(db, req.Name, req.Email, string(senhaHash))
         if err != nil {
             http.Error(w, `{"erro": "Erro ao salvar usuário no banco de dados"}`, http.StatusInternalServerError)
             return

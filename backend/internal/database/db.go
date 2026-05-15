@@ -5,10 +5,11 @@ import (
     "fmt"
     "log"
     "os"
+    "github.com/joho/godotenv"
     _ "github.com/lib/pq"
 )
 
-func ConectarBanco() (*sql.DB, error) {
+func Conectar() (*sql.DB, error) {
     err := godotenv.Load("../../.env")
     if err != nil {
         err = godotenv.Load(".env")
@@ -36,6 +37,12 @@ func ConectarBanco() (*sql.DB, error) {
     if err != nil {
         return nil, err
     }
+
+    err = db.Ping()
+    if err != nil {
+        log.Fatal("Erro ao conectar no banco de dados (Ping falhou):", err)
+    }
+    fmt.Println("✅ Banco de dados conectado com sucesso!")
 
     return db, nil
 }
