@@ -9,7 +9,7 @@ import (
     _ "github.com/lib/pq"
 )
 
-func ConectarBanco() (*sql.DB, error) {
+func Conectar() (*sql.DB, error) {
     err := godotenv.Load("../../.env")
     if err != nil {
         err = godotenv.Load(".env")
