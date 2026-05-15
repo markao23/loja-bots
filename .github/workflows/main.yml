@@ -1,0 +1,28 @@
+name: "Housekeeping: Limpeza de Branches Stale"
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch: # Permite execução manual pela aba 'Actions'
+
+permissions:
+  contents: write # Necessário para deletar as branches
+
+jobs:
+  cleanup:
+    name: Stale Branch Cleanup
+    runs-on: ubuntu-latest
+    
+    concurrency:
+      group: cleanup-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: "🧹 Executando limpeza de branches inativas"
+        uses: phishack/stale-branches@v2.1.0
+        with:
+          days-before-stale: 30
+          days-before-delete: 0 # Deleta imediatamente após identificar como stale
+          branches-to-exempt: "main,master,develop,production,release/*"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          dry-run: false
