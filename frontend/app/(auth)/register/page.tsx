@@ -7,6 +7,9 @@ const ModernInput = ({
   label,
   placeholder,
   type = "text",
+  value,
+  onChange,
+  className,
   ...props
 }: any) => {
   const [focused, setFocused] = useState(false);
@@ -28,14 +31,12 @@ const ModernInput = ({
         <input
           id={id}
           type={type}
+          value={value}
+          onChange={onChange}
           placeholder={placeholder}
           onFocus={() => setFocused(true)}
           onBlur={(e) => setFocused(e.target.value !== "")}
-          className="w-full h-12 px-4 py-3 font-mono text-sm tracking-wide transition-all duration-200 rounded-lg 
-                     bg-neutral-900 border border-neutral-800 text-neutral-100 
-                     placeholder:text-neutral-600
-                     hover:border-neutral-700
-                     focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:outline-none"
+          className={`w-full h-12 px-4 py-3 font-mono text-sm tracking-wide transition-all duration-200 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-100 placeholder:text-neutral-600 hover:border-neutral-700 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:outline-none ${className || ''}`}
           {...props}
         />
         <div className="absolute inset-0 transition-opacity duration-300 rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 ring-1 ring-neutral-700/50"></div>
@@ -48,6 +49,46 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoding, setisLoding] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!name || !email || !password) {
+      alert("Por favor, preencha todos os campos correspodentes");
+      return;
+    }
+    setisLoding(true)
+
+    try {
+      const response = await fetch("http://localhost:8080/api/registro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          senha: password
+        }),
+      });
+
+      if (response.ok) {
+        alert("Conta criada com sucesso")
+        setName("");
+        setEmail("");
+        setPassword("");
+      } else {
+        const errorData = await response.json();
+        alert(`Erro: ${errorData.message || "Falha ao criar a conta."}`);
+      }
+    } catch (error) {
+      console.error("Erro na comunicação com o servidor:", error);
+      alert("Erro de conexão. Verifique se o backend está rodando.");
+    } finally {
+      setisLoding(false)
+    }
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#09090b] p-4">
       <div className="w-full max-w-[420px] bg-[#121214] border border-white/5 rounded-2xl p-8 shadow-2xl">
@@ -98,14 +139,13 @@ export default function Register() {
         </div>
 
         {/* Formulário */}
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <ModernInput
               id="name"
               label="Nome Completo"
-              type="email"
+              placeholder="Nome Completo"
               value={name}
-              placeholder="Nome completo"
               onChange={(e: any) => setName(e.target.value)}
               className="w-full px-4 py-3 bg-[#18181b] border border-white/5 rounded-lg text-sm text-white placeholder:text-zinc-700 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all"
             />
@@ -136,16 +176,19 @@ export default function Register() {
           <div className="pt-2">
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-[#00E5FF] to-[#2979FF] hover:opacity-90 rounded-lg text-sm font-bold text-black transition-opacity"
+              disabled={isLoding}
+              className={`group flex w-full items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-[#00E5FF] to-[#2979FF] hover:opacity-90 rounded-lg text-sm font-bold text-black transition-opacity ${isLoding ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              CRIAR CONTA
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                className="w-4 h-4 group-hover:translate-x-1 transition-transform"
-              >
-                <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
-              </svg>
+              {isLoding ? "ENVIANDO..." : "CRIAR CONTA"}
+              {isLoding && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                >
+                  <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
+                </svg>
+              )}
             </button>
           </div>
         </form>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const ModernInput = ({
   id,
@@ -75,10 +76,43 @@ const GlowButton = ({ children, ...props }: any) => (
 export default function MercadoModernLoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("")
+  const [isLoading, setisLoading] = useState(false);
+  const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login attempt with:", { email, password });
+    setError("")
+    setisLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: password
+        }),
+      });
+
+      console.log("Status que o Go devolveu:", response.status);
+
+      const data = await response.json()
+      console.log("Resposta de go:", data)
+
+      if (!response.ok) {
+        throw new Error(data.erro || "Falha ao realizar o login")
+      }
+
+      console.log("Login aprovado", data);
+    } catch (error: any) {
+      console.error("Erro no login:", error);
+      setError(error.message);
+    } finally {
+      setisLoading(false)
+    }
   };
 
   return (
@@ -180,7 +214,13 @@ export default function MercadoModernLoginForm() {
               </div>
             </div>
 
-            <GlowButton type="submit">Entrar no Painel</GlowButton>
+            {error &&
+              <p className="text-red-500 text-sm mb-4">{ error }</p>
+            }
+
+            <GlowButton type="submit" disabled={isLoading}>
+              {isLoading ? "Entrando..." : "Entrar no Painel"}
+            </GlowButton>
           </form>
 
           <footer className="mt-10 text-center text-sm text-neutral-500">

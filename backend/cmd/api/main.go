@@ -19,10 +19,11 @@ func main() {
 
 	// 2. Configura as Rotas passando a conexão do banco
 	roteador := routes.ConfigurarRotas(db)
+	cors := routes.CorsMiddleware(roteador);
 
 	// 3. Inicia o Servidor na porta 8080
 	log.Println("Servidor rodando na porta 8080...")
-	err = http.ListenAndServe(":8080", roteador)
+	err = http.ListenAndServe(":8080", cors)
 	if err != nil {
 		log.Fatalf("Erro ao iniciar servidor: %v", err)
 	}
